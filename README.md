@@ -27,6 +27,11 @@ mkdir ../model/vit_checkpoint/imagenet21k &&
 mv {MODEL_NAME}.npz ../model/vit_checkpoint/imagenet21k/{MODEL_NAME}.npz
 ```
 
+Make sure the resulting file path is `../model/vit_checkpoint/imagenet21k/{MODEL_NAME}.npz`
+relative to the repository root. Training will fail if this checkpoint is
+missing.
+```
+
 ### 2. Prepare data (All data are available!)
 
 All data are available so no need to send emails for data. Please use the [BTCV preprocessed data](https://drive.google.com/drive/folders/1ACJEoTp-uqfFJ73qS3eUObQh52nGuzCd?usp=sharing) and [ACDC data](https://drive.google.com/drive/folders/1KQcrci7aKsYZi1hQoZ3T3QUtcy7b--n4?usp=drive_link).
@@ -47,6 +52,18 @@ CUDA_VISIBLE_DEVICES=0 python train.py --dataset Synapse --vit_name R50-ViT-B_16
 
 ```bash
 python test.py --dataset Synapse --vit_name R50-ViT-B_16
+```
+
+- Train on the CBIS-DDSM dataset located at `/data/xudosong/Transfer_Scratch/CBIS_max_last_withAug3_noise/CBIS_pre`:
+
+```bash
+CUDA_VISIBLE_DEVICES=0 python train.py --dataset CBIS --vit_name R50-ViT-B_16 --img_size 256
+```
+
+- Test on the CBIS-DDSM dataset:
+
+```bash
+python test.py --dataset CBIS --vit_name R50-ViT-B_16 --img_size 256
 ```
 
 ## Reference
