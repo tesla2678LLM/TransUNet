@@ -23,14 +23,16 @@ This repo holds code for [TransUNet: Transformers Make Strong Encoders for Medic
 * [Get models in this link](https://console.cloud.google.com/storage/vit_models/): R50-ViT-B_16, ViT-B_16, ViT-L_16...
 ```bash
 wget https://storage.googleapis.com/vit_models/imagenet21k/{MODEL_NAME}.npz &&
-mkdir ../model/vit_checkpoint/imagenet21k &&
+mkdir -p ../model/vit_checkpoint/imagenet21k &&
 mv {MODEL_NAME}.npz ../model/vit_checkpoint/imagenet21k/{MODEL_NAME}.npz
 ```
 
 Make sure the resulting file path is `../model/vit_checkpoint/imagenet21k/{MODEL_NAME}.npz`
 relative to the repository root. Training will fail if this checkpoint is
-missing.
-```
+
+missing. When using `--vit_name R50-ViT-B_16`, download the file named
+`R50+ViT-B_16.npz`.
+
 
 ### 2. Prepare data (All data are available!)
 
@@ -57,9 +59,8 @@ python test.py --dataset Synapse --vit_name R50-ViT-B_16
 - Train on the CBIS-DDSM dataset located at `/data/xudosong/Transfer_Scratch/CBIS_max_last_withAug3_noise/CBIS_pre`:
 
 ```bash
-CUDA_VISIBLE_DEVICES=0 python train.py --dataset CBIS --vit_name R50-ViT-B_16 --img_size 256
+CUDA_VISIBLE_DEVICES=0,1 python train.py --dataset CBIS --vit_name R50-ViT-B_16 --img_size 256 --n_gpu 2
 ```
-
 - Test on the CBIS-DDSM dataset:
 
 ```bash
