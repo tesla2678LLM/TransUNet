@@ -10,6 +10,7 @@ import torch.nn as nn
 from torch.utils.data import DataLoader
 from tqdm import tqdm
 from datasets.dataset_synapse import Synapse_dataset
+from datasets.dataset_cbis import CBISDataset
 from utils import test_single_volume
 from networks.vit_seg_modeling import VisionTransformer as ViT_seg
 from networks.vit_seg_modeling import CONFIGS as CONFIGS_ViT_seg
@@ -85,6 +86,13 @@ if __name__ == "__main__":
             'num_classes': 9,
             'z_spacing': 1,
         },
+        'CBIS': {
+            'Dataset': CBISDataset,
+            'volume_path': '/data/xudosong/Transfer_Scratch/CBIS_max_last_withAug3_noise/CBIS_pre',
+            'list_dir': '',
+            'num_classes': 2,
+            'z_spacing': 1,
+        },
     }
     dataset_name = args.dataset
     args.num_classes = dataset_config[dataset_name]['num_classes']
@@ -112,6 +120,9 @@ if __name__ == "__main__":
     config_vit = CONFIGS_ViT_seg[args.vit_name]
     config_vit.n_classes = args.num_classes
     config_vit.n_skip = args.n_skip
+    if not hasattr(config_vit, 'skip_channels'):
+        config_vit.skip_channels = [0, 0, 0, 0]
+        config_vit.n_skip = 0
     config_vit.patches.size = (args.vit_patches_size, args.vit_patches_size)
     if args.vit_name.find('R50') !=-1:
         config_vit.patches.grid = (int(args.img_size/args.vit_patches_size), int(args.img_size/args.vit_patches_size))
