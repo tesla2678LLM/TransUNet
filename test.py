@@ -129,7 +129,13 @@ if __name__ == "__main__":
     net = ViT_seg(config_vit, img_size=args.img_size, num_classes=config_vit.n_classes).cuda()
 
     snapshot = os.path.join(snapshot_path, 'best_model.pth')
-    if not os.path.exists(snapshot): snapshot = snapshot.replace('best_model', 'epoch_'+str(args.max_epochs-1))
+    if not os.path.exists(snapshot):
+        checkpoints = [f for f in os.listdir(snapshot_path) if f.startswith('epoch_') and f.endswith('.pth')]
+        if checkpoints:
+            checkpoints.sort(key=lambda x: int(x.split('_')[1].split('.')[0]))
+            snapshot = os.path.join(snapshot_path, checkpoints[-1])
+        else:
+            snapshot = snapshot.replace('best_model', 'epoch_'+str(args.max_epochs-1))
     net.load_state_dict(torch.load(snapshot))
     snapshot_name = snapshot_path.split('/')[-1]
 
