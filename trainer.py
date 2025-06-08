@@ -94,3 +94,4 @@ def trainer_synapse(args, model, snapshot_path):
 
     writer.close()
     return "Training Finished!"
+
