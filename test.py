@@ -49,7 +49,7 @@ def inference(args, model, test_save_path=None):
     model.eval()
     metric_list = 0.0
     for i_batch, sampled_batch in tqdm(enumerate(testloader)):
-        h, w = sampled_batch["image"].size()[2:]
+        h, w = sampled_batch["image"].shape[-2:]
         image, label, case_name = sampled_batch["image"], sampled_batch["label"], sampled_batch['case_name'][0]
         metric_i = test_single_volume(image, label, model, classes=args.num_classes, patch_size=[args.img_size, args.img_size],
                                       test_save_path=test_save_path, case=case_name, z_spacing=args.z_spacing)
@@ -118,7 +118,13 @@ if __name__ == "__main__":
     net = ViT_seg(config_vit, img_size=args.img_size, num_classes=config_vit.n_classes).cuda()
 
     snapshot = os.path.join(snapshot_path, 'best_model.pth')
-    if not os.path.exists(snapshot): snapshot = snapshot.replace('best_model', 'epoch_'+str(args.max_epochs-1))
+    if not os.path.exists(snapshot):
+        checkpoints = [f for f in os.listdir(snapshot_path) if f.startswith('epoch_') and f.endswith('.pth')]
+        if checkpoints:
+            checkpoints.sort(key=lambda x: int(x.split('_')[1].split('.')[0]))
+            snapshot = os.path.join(snapshot_path, checkpoints[-1])
+        else:
+            snapshot = snapshot.replace('best_model', 'epoch_'+str(args.max_epochs-1))
     net.load_state_dict(torch.load(snapshot))
     snapshot_name = snapshot_path.split('/')[-1]
 
